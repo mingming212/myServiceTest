@@ -43,6 +43,13 @@
             <artifactId>json-path</artifactId>
             <version>2.4.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.junit-team.junit5</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>master-r5.3.0-g679f8f6-978</version>
+            <scope>test</scope>
+        </dependency>
+
 
     </dependencies>
 
