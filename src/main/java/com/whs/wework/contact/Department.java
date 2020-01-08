@@ -4,6 +4,7 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import io.restassured.response.Response;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Department extends Contact {
@@ -63,5 +64,14 @@ public class Department extends Contact {
                 .post("https://qyapi.weixin.qq.com/cgi-bin/department/update")
                 .then()
                 .extract().response();
+    }
+
+    public void deleteAll(){
+        ArrayList<Integer> alist=list("").then().extract().response().path("department.id");
+        System.out.println(alist.toString());
+       /* for(int id:alist){
+            department.delete(String.valueOf(id));
+        }*/
+        alist.forEach(id->delete(id.toString()));
     }
 }

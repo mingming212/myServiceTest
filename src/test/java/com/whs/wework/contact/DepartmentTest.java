@@ -4,6 +4,7 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -102,5 +103,11 @@ class DepartmentTest extends Contact{
                 .then().statusCode(200).body("errcode", equalTo(0));
     }
 
+
+    @Test
+    void deleteAll(){
+        department.deleteAll();
+
+    }
 
 }
