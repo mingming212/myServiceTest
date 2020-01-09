@@ -18,6 +18,8 @@ public class Contact extends Restful {
                 .log().all()
                 .queryParam("access_token", Wework.getToken())
                 .contentType(ContentType.JSON)
-                .expect().log().all().statusCode(200);//提前写断言
+                .expect()
+                .log().all()
+                .statusCode(200);//提前写断言
     }
 }
