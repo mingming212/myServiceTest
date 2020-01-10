@@ -19,19 +19,38 @@
             </plugin>
         </plugins>
     </build>
-
     <dependencies>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+            <version>1.5.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.5.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>5.5.2</version>
+            <scope>test</scope>
+        </dependency>
+
+
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
             <version>4.1.2</version>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.3.2</version>
-            <scope>test</scope>
-        </dependency>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.5.1</version>
+
+        </dependency>-->
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
@@ -43,14 +62,6 @@
             <artifactId>json-path</artifactId>
             <version>2.4.0</version>
         </dependency>
-        <dependency>
-            <groupId>com.github.junit-team.junit5</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-            <version>master-r5.3.0-g679f8f6-978</version>
-            <scope>test</scope>
-        </dependency>
-
-
     </dependencies>
 
 </project>

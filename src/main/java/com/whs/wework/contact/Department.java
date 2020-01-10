@@ -66,6 +66,15 @@ public class Department extends Contact {
                 .extract().response();
     }
 
+    public Response update(HashMap<String,Object> map){
+        //伪代码，演示通过分析Har文件中的信息，传递参数去请求接口，简化代码
+        return templateFromHar(
+                "data/demo.har.json",
+                "https://work.weixin.qq.com/wework_admin/contacts/getSingleMember",
+                map);
+
+    }
+
     public void deleteAll(){
         ArrayList<Integer> alist=list("").then().extract().response().path("department.id");
         System.out.println(alist.toString());

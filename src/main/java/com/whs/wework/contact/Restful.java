@@ -24,9 +24,33 @@ public class Restful {
 
     public static String template(String path,HashMap<String,Object> map){
         DocumentContext documentContext= JsonPath.parse(Restful.class.getResourceAsStream(path));
-        map.entrySet().forEach(entry -> documentContext.set(entry.getKey(),entry.getValue()));
+        map.entrySet().forEach(entry ->
+                documentContext.set(entry.getKey(),entry.getValue()));
         return documentContext.jsonString();
     }
 
+    public Response templateFromHar(String path,String pattern,HashMap<String,Object> map){
+        //todo：支持从har文件读取接口定义并发送
+        //从har中读取请求，进行更新
+        DocumentContext documentContext= JsonPath.parse(Restful.class.getResourceAsStream(path));
+        map.entrySet().forEach(entry ->
+                documentContext.set(entry.getKey(),entry.getValue()));
+
+        String method=documentContext.read("method");       //读取har中的信息,伪代码
+        String url=documentContext.read("url");       //读取har中的信息,伪代码
+        return requestSpecification.when().request(method,url);
+    }
+
+    public Response templateFromSwagger(String path,String pattern,HashMap<String,Object> map){
+        //todo：支持从swagger文件读取接口定义并发送
+        //从swagger中读取请求，进行更新
+        DocumentContext documentContext= JsonPath.parse(Restful.class.getResourceAsStream(path));
+        map.entrySet().forEach(entry ->
+                documentContext.set(entry.getKey(),entry.getValue()));
+
+        String method=documentContext.read("method");       //读取har中的信息,伪代码
+        String url=documentContext.read("url");       //读取har中的信息,伪代码
+        return requestSpecification.when().request(method,url);
+    }
 
 }
