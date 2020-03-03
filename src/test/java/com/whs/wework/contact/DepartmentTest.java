@@ -107,7 +107,15 @@ class DepartmentTest extends Contact{
     @Test
     void deleteAll(){
         department.deleteAll();
-
+    }
+    
+    @Test
+    void listFromHar() {
+    	//从har文件中读取URL、method等数据，发送情趣
+    	//2020.3月份更新，尝试读取har文件，并发送，此为半成品，map其实未用到，目前可以发送请求，但不知是否网站有要求，导致结果返回"message": "outsession"
+    	HashMap<String,Object> map=new HashMap<String, Object>();
+    	department.list(map);
+    	
     }
 
 }
