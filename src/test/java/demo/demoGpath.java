@@ -19,7 +19,7 @@ public class demoGpath {
 	 * "jsonpath"使用的是Groovy中的Gpath的语法
 	 */
 	public void testJson() {
-		RestAssured.registerParser("application/octet-stream",Parser.JSON);
+		RestAssured.registerParser("application/octet-stream",Parser.JSON);//访问本地的python -m CGIHTTPServer服务时，需要使用预定义的解析器注册要解析的自定义内容类型
 		
 		given()
 		.when().get("http://127.0.0.1:8000/lotto.json")
@@ -34,7 +34,9 @@ public class demoGpath {
 		.body("store.book.category", hasItems("fiction"))//断言：json里的数组	
 		.body("store.book[0].author", equalTo("Nigel Rees"))
 		.body("store.book.findAll { book -> book.price >=5 && book.price <=15}.size()", equalTo(3))//去book下面找price在5和15之间的元素。 findAll查找所有，返回类型是数组[]。
-		.body("store.book.find { book -> book.price ==8.95f}.price", equalTo(8.95f) );//去book下面找price=8.95的元素。  浮点数8.95后面需要加f
+		.body("store.book.find { book -> book.price ==8.95f}.price", equalTo(8.95f) )//去book下面找price=8.95的元素。  浮点数8.95后面需要加f
+		.body("store.book.find { it.price ==8.95f}.price", equalTo(8.95f) )//去book下面找price=8.95的元素。  浮点数8.95后面需要加f
+		;
 	}
 	
 	@Test
