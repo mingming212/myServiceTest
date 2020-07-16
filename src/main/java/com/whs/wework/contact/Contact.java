@@ -21,5 +21,10 @@ public class Contact extends Restful {
                 .expect()
                 .log().all()
                 .statusCode(200);//提前写断言
+
+        requestSpecification.filter((req,res,ctx)->{
+            //todo: 对请求 相应，做封装
+            return ctx.next(req,res);
+        });
     }
 }
