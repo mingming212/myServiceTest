@@ -1,13 +1,10 @@
 package com.whs.wework.contact;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
 import org.junit.jupiter.params.provider.ValueSource;
-//import org.junit.jupiter.params.provider.CsvFileSource;
-//import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -63,6 +60,7 @@ public class MemberTest {
         String userid="hao1_1576492351381";
         HashMap<String,Object> map=new HashMap<>();
         map.put("userid",userid);
+        map.put("mobile","180"+member.time.substring(5,13));
         member.update(map).then().body("errcode",equalTo(0));
     }
 
@@ -76,7 +74,7 @@ public class MemberTest {
     }
 
     //批量删除成员
-    @Test
+//    @Test
     void batchdelete() {
         //todo:现在，删除的账户是写死的
         member.batchdelete("ForDelete_1578551361232","ForDelete_1578551517351")
