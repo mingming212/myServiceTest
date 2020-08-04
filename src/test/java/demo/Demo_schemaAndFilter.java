@@ -28,9 +28,9 @@ public class Demo_schemaAndFilter {
 	@BeforeClass
 	public static void beforeClass() {
 		useRelaxedHTTPSValidation();//信任https的任何证书
-		RestAssured.proxy("127.0.0.1", 8888);//使用fiddler代理，所有请求将会走一遍fiddler
+		RestAssured.proxy("127.0.0.1", 8888);//使用fiddler代理，所有请求将会走一遍fiddler，所以fiddler软件需要保持打开
 		
-		//spec方法设置全局变量（以下设置所有的的case中请求/返回都会做以下修改）
+		//用spec方法设置全局变量（调用given().spec(requestSpecification)方法的case中，请求/返回都会做以下修改）
 		requestSpecification=new RequestSpecBuilder().build();
 		requestSpecification.cookies("a","whswhs");
 		requestSpecification.contentType(ContentType.JSON);
@@ -39,15 +39,16 @@ public class Demo_schemaAndFilter {
 		responsSpecification=new ResponseSpecBuilder().build();
 		responsSpecification.statusCode(200);
 		responsSpecification.body("code", equalTo(1));
-		
-		  //全局filter，作用于所有的case 
+
+		String cookieStr="device_id=24700f9f1986800ab4fcc880530dd0ed; xq_a_token=ad923af9f68bb6a13ada0962232589cea11925c4; xqat=ad923af9f68bb6a13ada0962232589cea11925c4; xq_r_token=cf0e6f767c2318f1f1779fcee9323365f02e1b4b; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOi0xLCJpc3MiOiJ1YyIsImV4cCI6MTU5NjE2MjgxNSwiY3RtIjoxNTk0OTcyNzQyMTE4LCJjaWQiOiJkOWQwbjRBWnVwIn0.lSbMH6tNkpWj1nCVvGv6KimwGDQ3YIYPsSfzqmYNrIaR9UlDYkKcwj0BcTWYD2ZDEtiTYvQJAiFWr5GYnwr8p9YFgl9TL4lxi8X-nloprIerz9CCugYFzIZ9PK49FVYOEStp1gP7Xo4LmxCeVGOsNYiKgck48WbVIqgHxxap8-tpFMfyt1mWyVDK-inSjMJOKPsJ9axHSTLf6QRNP8Ot7k6uKfu8Xxr1Gcy9ddeLUZ3yKGGA3YG4gVKD21xFOx2q_rrGrx0ITqDWguWAVFWx5bERAnA8-3UzkJreKf0bg_bbms5gO7Egt4tyGH_RcUBvurVbNLt_1bBSGmqck5qOKQ; u=341594972785061; Hm_lvt_1db88642e346389874251b5a1eded6e3=1594972787; Hm_lpvt_1db88642e346389874251b5a1eded6e3=1595214542";
+		  //全局filter，作用于所有的case
 		RestAssured.filters((req, res, ctx) -> {
 		  if(req.getURI().contains("xueqiu.com")) { //如果请求的URI中包含"xueqiu.com"
 			  req.header("aaa","bbb"); 
-			  req.cookie("xq_a_token=2ee68b782d6ac072e2a24d81406dd950aacaebe3; xqat=2ee68b782d6ac072e2a24d81406dd950aacaebe3; xq_r_token=f9a2c4e43ce1340d624c8b28e3634941c48f1052; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOi0xLCJpc3MiOiJ1YyIsImV4cCI6MTU4NzUyMjY2MSwiY3RtIjoxNTg1MzgxODQ1MTMzLCJjaWQiOiJkOWQwbjRBWnVwIn0.JtFg3Me8iCVvUS89_zoU-oSfDEUN9ZQDtdjxU9NQF_PUuHAyHbVAUBiQkvzuJ7yo_-8TA6UdY1XK36b3GQvHW5EIrQ6E4ddsZC2IfNBymaQBajl6QIc7H4d4n8w5SpP0uhn1EpBiqd6EWv-LyJsYXwfrcboh2tbjNb3yGyIC1cvGUBzzqa3iVckfCcKWuXIzvzfJtgoUwfAWdgVVI8BmXdrUp9UphSjs9KiAT_qZUspb-WG9eN8C1Nm9ck8hwcDk-D-QqqHUdUVvMMwGHkZaWLaUD7xPDXpiRga_5LLF3FN6f8M4gvmEZOZFrRpbsxpadiDOV2Ev1mjKgFrYC18DlA; u=941585381876784; Hm_lvt_1db88642e346389874251b5a1eded6e3=1585381878; device_id=24700f9f1986800ab4fcc880530dd0ed; Hm_lpvt_1db88642e346389874251b5a1eded6e3=1585383069"
+			  req.cookie(cookieStr
 		  );
 		  } 
-		  req.body("k1,v1");
+//		  req.body("k1,v1");
 		  Response responseOrigin=ctx.next(req, res); 
 		  return responseOrigin; 
 		}
@@ -57,6 +58,11 @@ public class Demo_schemaAndFilter {
 	
 	
 	@Test
+	/**
+	 * 雪球官网登录，使用错误的密码，返回错误信息
+	 * 运行时注意：beforeClass方法中是否设置代理,
+	 * 疑问：这里设置的cookie是几个月以前的，也可以执行成功，为什么不会失效？
+	 */
 	public void testLogin() {
 		Response response =given()
 			.header("User-Agent"," Xueqiu iPhone 12.6.1")
@@ -73,9 +79,11 @@ public class Demo_schemaAndFilter {
 			.formParam("password", "f82d31d5822e98e1eeb81429fb99b687")
 			.formParam("username", "112563641@qq.com")
 			.formParam("sid", "82493CC3-F39D-4411-B735-9A4E2E65CCD2")
-		.when().post("https://api.xueqiu.com/provider/oauth/token")
-		.then().log().all()
-		.statusCode(400)
+		.when()
+				.post("https://api.xueqiu.com/provider/oauth/token")
+		.then()
+				.log().all()
+				.statusCode(400)
 //		.body("error_code",equalTo("20082"))
 		.extract().response();
 
@@ -109,7 +117,7 @@ public class Demo_schemaAndFilter {
 	}
 	
 	@Test
-	/*
+	/**
 	 * 演示发送时，body用map填充
 	 */
 	public void testPostJson() {
@@ -151,10 +159,13 @@ public class Demo_schemaAndFilter {
 	}
 	
 	@Test
+	/**
+	 * 雪球官网搜索sogo，
+	 */
 	public void testFilterAddCookie() {
 		given()
 			.queryParam("symbol", "SOGO")
-//			.cookie("xq_a_token=2ee68b782d6ac072e2a24d81406dd950aacaebe3; xqat=2ee68b782d6ac072e2a24d81406dd950aacaebe3; xq_r_token=f9a2c4e43ce1340d624c8b28e3634941c48f1052; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOi0xLCJpc3MiOiJ1YyIsImV4cCI6MTU4NzUyMjY2MSwiY3RtIjoxNTg1MzgxODQ1MTMzLCJjaWQiOiJkOWQwbjRBWnVwIn0.JtFg3Me8iCVvUS89_zoU-oSfDEUN9ZQDtdjxU9NQF_PUuHAyHbVAUBiQkvzuJ7yo_-8TA6UdY1XK36b3GQvHW5EIrQ6E4ddsZC2IfNBymaQBajl6QIc7H4d4n8w5SpP0uhn1EpBiqd6EWv-LyJsYXwfrcboh2tbjNb3yGyIC1cvGUBzzqa3iVckfCcKWuXIzvzfJtgoUwfAWdgVVI8BmXdrUp9UphSjs9KiAT_qZUspb-WG9eN8C1Nm9ck8hwcDk-D-QqqHUdUVvMMwGHkZaWLaUD7xPDXpiRga_5LLF3FN6f8M4gvmEZOZFrRpbsxpadiDOV2Ev1mjKgFrYC18DlA; u=941585381876784; Hm_lvt_1db88642e346389874251b5a1eded6e3=1585381878; device_id=24700f9f1986800ab4fcc880530dd0ed; Hm_lpvt_1db88642e346389874251b5a1eded6e3=1585383069")
+//			.cookie("device_id=24700f9f1986800ab4fcc880530dd0ed; xq_a_token=ad923af9f68bb6a13ada0962232589cea11925c4; xqat=ad923af9f68bb6a13ada0962232589cea11925c4; xq_r_token=cf0e6f767c2318f1f1779fcee9323365f02e1b4b; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOi0xLCJpc3MiOiJ1YyIsImV4cCI6MTU5NjE2MjgxNSwiY3RtIjoxNTk0OTcyNzQyMTE4LCJjaWQiOiJkOWQwbjRBWnVwIn0.lSbMH6tNkpWj1nCVvGv6KimwGDQ3YIYPsSfzqmYNrIaR9UlDYkKcwj0BcTWYD2ZDEtiTYvQJAiFWr5GYnwr8p9YFgl9TL4lxi8X-nloprIerz9CCugYFzIZ9PK49FVYOEStp1gP7Xo4LmxCeVGOsNYiKgck48WbVIqgHxxap8-tpFMfyt1mWyVDK-inSjMJOKPsJ9axHSTLf6QRNP8Ot7k6uKfu8Xxr1Gcy9ddeLUZ3yKGGA3YG4gVKD21xFOx2q_rrGrx0ITqDWguWAVFWx5bERAnA8-3UzkJreKf0bg_bbms5gO7Egt4tyGH_RcUBvurVbNLt_1bBSGmqck5qOKQ; u=341594972785061; Hm_lvt_1db88642e346389874251b5a1eded6e3=1594972787; Hm_lpvt_1db88642e346389874251b5a1eded6e3=1594972787")
 				/* //已设置全局的filter，先把这里注释掉。这里写也可以
 				 * //请求时拦截，并修改header信息：
 				 * .filter((req, res, ctx) -> { req.header("aaa","bbb"); Response
@@ -169,8 +180,8 @@ public class Demo_schemaAndFilter {
 	}
 	
 	@Test
-	/*
-	 * base64.json接口返回的是base64加密的内容，演示用filter进行解密
+	/**
+	 * base64.json接口返回的是base64加密的内容，演示用filter对接口返回内容进行解密
 	 */
 	public void testFilterInBase64() {
 			given()
@@ -192,12 +203,15 @@ public class Demo_schemaAndFilter {
 			
 		.when()
 			.log().all()
-			.get("http://127.0.0.1:8000/no_base64.json")//.prettyPeek()
+			.get("http://127.0.0.1:8000/base64.json")//.prettyPeek()
 		.then()
 			.log().all()
 			.statusCode(200)
 			.body("data.items[0].quote.code", equalTo("SOGO"))
 			;
 	}
+
+
+
 	
 }
