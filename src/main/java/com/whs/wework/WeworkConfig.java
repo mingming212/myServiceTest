@@ -16,25 +16,27 @@ public class WeworkConfig {
     private static WeworkConfig weworkConfig;
     public static WeworkConfig getInstance(){
         if(weworkConfig==null){
-            weworkConfig=new WeworkConfig();
+            weworkConfig=load("/conf/WeworkConfig.yaml");//从配置文件中读取信息（替代在类中设置的变量，更方便管理）
+            System.out.println(weworkConfig.corpid);
         }
         return weworkConfig;
 
     }
 
-    public static void load(String path){
-        //todo: read from yaml or json
+    public static WeworkConfig load(String path){
+        //fixed: read from yaml or json
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 
         try {
-//            mapper.readValue(WeworkConfig.class.getResourceAsStream(path),WeworkConfig.class);
+            //writeValueAsString()方法：将java类序列化为String，即：将类的信息（如变量）转化成yaml格式
+//            System.out.println(mapper.writeValueAsString(WeworkConfig.getInstance()));
 
-
-            //将java类序列化为String，即：将类的信息（如变量）转化成yaml格式
-            System.out.println(mapper.writeValueAsString(WeworkConfig.getInstance()));
+            //readValue()方法：读取yaml文件，返回类的实例
+            return mapper.readValue(WeworkConfig.class.getResourceAsStream(path),WeworkConfig.class);
 
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
 
     }
