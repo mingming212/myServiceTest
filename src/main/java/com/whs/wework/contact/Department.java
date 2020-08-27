@@ -9,12 +9,21 @@ import java.util.HashMap;
 
 public class Department extends Contact {
     public Response list(String id){
+ /*这种写法是基本写法，也可以用下面的从yaml文件读取接口定义来代替
         reset();
         return requestSpecification
                 .param("id", id)
                 .when()
                 .get("https://qyapi.weixin.qq.com/cgi-bin/department/list")
         .then().extract().response();
+*/
+
+        //从yaml读取接口定义
+        HashMap<String, Object> map=new HashMap<String, Object>();
+        map.put("id", id);
+        return templateFromYaml("/api/list.yaml",map);
+
+
     }
 
     //post请求

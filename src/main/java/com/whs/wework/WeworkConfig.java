@@ -17,7 +17,7 @@ public class WeworkConfig {
     public static WeworkConfig getInstance(){
         if(weworkConfig==null){
             weworkConfig=load("/conf/WeworkConfig.yaml");//从配置文件中读取信息（替代在类中设置的变量，更方便管理）
-            System.out.println(weworkConfig.corpid);
+//            System.out.println(weworkConfig.corpid);
         }
         return weworkConfig;
 

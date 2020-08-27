@@ -1,11 +1,13 @@
 package com.whs.wework.contact;
 
+import com.whs.wework.Api;
+import com.whs.wework.Restful;
 import com.whs.wework.Wework;
 import io.restassured.http.ContentType;
 
 import static io.restassured.RestAssured.given;
 
-public class Contact extends Restful {
+public class Contact extends Api {
     String time = String.valueOf(System.currentTimeMillis());
 
     public Contact(){
