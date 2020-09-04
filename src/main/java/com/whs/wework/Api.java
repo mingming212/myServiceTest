@@ -13,16 +13,10 @@ import java.util.HashMap;
 import static io.restassured.RestAssured.given;
 
 public class Api {
-
     HashMap<String,Object> query =new HashMap<String, Object>();
-    public RequestSpecification requestSpecification=given();
-    public Response send(){  //send()方法其实用不到，只是举个例子
-        requestSpecification=given().log().all();
-        query.entrySet().forEach(
-                entry -> requestSpecification.queryParam(entry.getKey(),entry.getValue())
-        );
 
-        return requestSpecification.when().request("get","baidu.com");
+    public RequestSpecification getDefaultRequestSpecification(){
+        return given().log().all();
     }
 
     public static String template(String path,HashMap<String,Object> map){
@@ -49,7 +43,7 @@ public class Api {
         String cookie=documentContext.read("$.log.entries[0].request.headers[-1].value");
 //        String cookie=documentContext.read("$.log.entries[0].request.headers[?(@.name == 'cookie')].value");
         System.out.println("~~~  "+cookie);
-        return requestSpecification.given().cookie("cookie", cookie).when().request(method,url);
+        return getDefaultRequestSpecification().given().cookie("cookie", cookie).when().request(method,url);
     }
 
     public Response templateFromSwagger(String path,String pattern,HashMap<String,Object> map){
@@ -61,7 +55,7 @@ public class Api {
 
         String method=documentContext.read("method");       //读取har中的信息,伪代码
         String url=documentContext.read("url");       //读取har中的信息,伪代码
-        return requestSpecification.when().request(method,url);
+        return getDefaultRequestSpecification().when().request(method,url);
     }
 
     public Response templateFromYaml(String path, HashMap<String,Object> map){
@@ -82,12 +76,13 @@ public class Api {
                 });
             }
 
+            RequestSpecification requestSpecification=getDefaultRequestSpecification();
             //循环设置请求中的query数据，即given().queryParam()
             restful.query.entrySet().forEach(entry->{
-                requestSpecification=requestSpecification.queryParam(entry.getKey(),entry.getValue());
+                requestSpecification.queryParam(entry.getKey(),entry.getValue());
+//                System.out.println("==========="+entry.getValue());
             });
 
-            System.out.println("==========="+restful.query);
             return requestSpecification
                     .log().all()
                     .request(restful.method,restful.url)

@@ -22,6 +22,7 @@ class DepartmentTest extends Contact{
     void list() {
         department.list("").then().statusCode(200).body("department.name[0]", equalTo("whs公司"));//list("")：id不填，默认获取全量组织架构
         department.list("1").then().statusCode(200).body("department.id[0]", equalTo(1));
+
     }
 
     @Test
@@ -72,9 +73,8 @@ class DepartmentTest extends Contact{
         Object oo = department.creat("whs" + time, "1").
                 then().extract()
                 .response().path("id");
-        System.out.println("---------" + oo);
+//        System.out.println("---------" + oo);
         id = String.valueOf(oo);
-
 
         department.delete(id)
                 .then().statusCode(200).body("errcode", equalTo(0));
