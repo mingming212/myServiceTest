@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Department extends Contact {
-    public Response list(String id){
+    public Response list(String id) {
  /*这种写法是基本写法，也可以用下面的从yaml文件读取接口定义来代替
         reset();
         return requestSpecification
@@ -19,14 +19,15 @@ public class Department extends Contact {
 */
 
         //从yaml读取接口定义
-        HashMap<String, Object> map=new HashMap<String, Object>();
+        HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("id", id);
-        return templateFromYaml("/api/list.yaml",map);
+        return templateFromYaml("/api/list.yaml", map);
 
     }
 
     //post请求
-    public Response creat(String name,String parentid){
+    public Response creat(String name, String parentid) {
+/*这种写法是基本写法，也可以用下面的从yaml文件读取接口定义来代替
         String body=JsonPath.parse(this.getClass().getResourceAsStream("/data/create.json"))
                 .set("name",name)
                 .set("parentid",parentid)
@@ -36,23 +37,34 @@ public class Department extends Contact {
                 .body(body)
                 .when().post("https://qyapi.weixin.qq.com/cgi-bin/department/create")
         .then().extract().response();
+*/
 
-
-
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("_file", "/data/create.json");
+        map.put("name", name);
+        map.put("parentid", parentid);
+        map.put("id", null);
+        return templateFromYaml("/api/create.yaml", map);
     }
 
-    public Response creat(HashMap<String,Object> map){
-        DocumentContext documentContext=JsonPath.parse(this.getClass().getResourceAsStream("/data/create.json"));
-        map.entrySet().forEach(entry -> documentContext.set(entry.getKey(),entry.getValue()));
+    public Response creat(HashMap<String, Object> map) {
+/*这种写法是基本写法，也可以用下面的从yaml文件读取接口定义来代替
+        DocumentContext documentContext = JsonPath.parse(this.getClass().getResourceAsStream("/data/create.json"));
+        map.entrySet().forEach(entry -> documentContext.set(entry.getKey(), entry.getValue()));
 
         return getDefaultRequestSpecification()
                 .body(documentContext.jsonString())
                 .when().post("https://qyapi.weixin.qq.com/cgi-bin/department/create")
                 .then().extract().response();
+*/
+
+        map.put("_file","/data/create.json");
+        return templateFromYaml("/api/create.yaml",map);
+
     }
 
-    public Response delete(String id){
-/*
+    public Response delete(String id) {
+/*这种写法是基本写法，也可以用下面的从yaml文件读取接口定义来代替
         return requestSpecification
                 .param("id",id)
                 .when()
@@ -61,16 +73,16 @@ public class Department extends Contact {
                 .extract().response();
 */
 
-
-        HashMap map=new HashMap();
-        map.put("id",id);
-        return templateFromYaml("/api/delete.yaml",map);
+        HashMap map = new HashMap();
+        map.put("id", id);
+        return templateFromYaml("/api/delete.yaml", map);
     }
 
-    public Response update(String id,String name){
-        String body=JsonPath.parse(this.getClass().getResourceAsStream("/data/update.json"))
-                .set("id",id)
-                .set("name",name)
+    public Response update(String id, String name) {
+/*
+        String body = JsonPath.parse(this.getClass().getResourceAsStream("/data/update.json"))
+                .set("id", id)
+                .set("name", name)
                 .jsonString();
         return getDefaultRequestSpecification()
                 .body(body)
@@ -78,23 +90,31 @@ public class Department extends Contact {
                 .post("https://qyapi.weixin.qq.com/cgi-bin/department/update")
                 .then()
                 .extract().response();
+*/
+
+        HashMap<String, Object> map=new HashMap<String, Object>();
+        map.put("_file","/data/update.json");
+        map.put("id", id);
+        map.put("name", name);
+        return templateFromYaml("/api/update.yaml",map);
+
     }
 
-    public void deleteAll(){
-        ArrayList<Integer> alist=list("").then().extract().response().path("department.id");
+    public void deleteAll() {
+        ArrayList<Integer> alist = list("").then().extract().response().path("department.id");
         System.out.println(alist.toString());
        /* for(int id:alist){
             department.delete(String.valueOf(id));
         }*/
-        alist.forEach(id->delete(id.toString()));
+        alist.forEach(id -> delete(id.toString()));
     }
-    
 
-    public Response list(HashMap<String,Object> map){
+
+    public Response list(HashMap<String, Object> map) {
         //伪代码，演示通过分析Har文件中的信息，传递参数去请求接口，简化代码
-    	//2020.3月份更新，尝试读取har文件，并发送，此为半成品，pattern和map参数未用到
-    	String pattern="";
-    	return templateFromHar(
+        //2020.3月份更新，尝试读取har文件，并发送，此为半成品，pattern和map参数未用到
+        String pattern = "";
+        return templateFromHar(
                 "/data/har_DepaList.json",
                 pattern,
                 map);

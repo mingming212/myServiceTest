@@ -16,9 +16,10 @@ public class Api {
     HashMap<String,Object> query =new HashMap<String, Object>();
 
     public RequestSpecification getDefaultRequestSpecification(){
-        return given().log().all();
+        return given();
     }
 
+    //用JsonPath读取path路径下的json文件，并用map里的值更新到此json里的值，返回带有新数据的json的字符串。比如返回一个新的body字符串
     public static String template(String path,HashMap<String,Object> map){
         DocumentContext documentContext= JsonPath.parse(Restful.class.getResourceAsStream(path));
         map.entrySet().forEach(entry ->
@@ -67,26 +68,34 @@ public class Api {
 
             //readValue()方法：读取yaml文件，返回类的实例
             Restful restful=mapper.readValue(Api.class.getResourceAsStream(path),Restful.class);
-//            System.out.println("-----------"+restful.method);
             if(restful.method.toLowerCase().contains("get")){
                 //用map中的数据，填充restful中的query
                 map.entrySet().forEach(entry->{
                     restful.query.replace(entry.getKey(),entry.getValue().toString());
 
                 });
+            }else if(restful.method.toLowerCase().contains("post")){
+                String filePath=map.get("_file").toString();
+                map.remove("_file");
+                restful.body=template(filePath,map);
             }
 
             RequestSpecification requestSpecification=getDefaultRequestSpecification();
             //循环设置请求中的query数据，即given().queryParam()
-            restful.query.entrySet().forEach(entry->{
-                requestSpecification.queryParam(entry.getKey(),entry.getValue());
-//                System.out.println("==========="+entry.getValue());
-            });
+            if(restful.query!=null) {
+                restful.query.entrySet().forEach(entry -> {
+                    requestSpecification.queryParam(entry.getKey(), entry.getValue());
+                });
+            }
 
+            if(restful.body!=null){
+                requestSpecification.body(restful.body);
+            }
             return requestSpecification
-                    .log().all()
+//                    .log().all()
                     .request(restful.method,restful.url)
-                    .then().log().all()
+                    .then()
+//                    .log().all()
                     .extract().response();
 
 

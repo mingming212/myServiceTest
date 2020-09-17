@@ -15,7 +15,9 @@ public class Contact extends Api {
     public RequestSpecification getDefaultRequestSpecification(){
         RequestSpecification requestSpecification=super.getDefaultRequestSpecification();
         requestSpecification
+                .log().all()
                 .queryParam("access_token", Wework.getToken())
+//                .queryParam("debug",1)    //debug用的，可生成一个hint值，方便在企业微信上查看请求的具体值
                 .contentType(ContentType.JSON)
                 .expect()
                 .log().all()
