@@ -8,17 +8,13 @@ import de.sstoehr.harreader.model.HarRequest;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ApiTest {
 
     @Test
     void templateFromYaml() {
         Api api=new Api();
-        api.templateFromYaml("/api/list.yaml",null).then().statusCode(200);
+        api.getResponseFromYaml("/api/list.yaml",null).then().statusCode(200);
     }
 
     @Test

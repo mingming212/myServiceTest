@@ -1,7 +1,5 @@
 package com.whs.wework.contact;
 
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.JsonPath;
 import io.restassured.response.Response;
 
 import java.util.ArrayList;
@@ -21,7 +19,7 @@ public class Department extends Contact {
         //从yaml读取接口定义
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("id", id);
-        return templateFromYaml("/api/list.yaml", map);
+        return getResponseFromYaml("/api/list.yaml", map);
 
     }
 
@@ -44,7 +42,7 @@ public class Department extends Contact {
         map.put("name", name);
         map.put("parentid", parentid);
         map.put("id", null);
-        return templateFromYaml("/api/create.yaml", map);
+        return getResponseFromYaml("/api/create.yaml", map);
     }
 
     public Response creat(HashMap<String, Object> map) {
@@ -59,7 +57,7 @@ public class Department extends Contact {
 */
 
         map.put("_file","/data/create.json");
-        return templateFromYaml("/api/create.yaml",map);
+        return getResponseFromYaml("/api/create.yaml",map);
 
     }
 
@@ -75,7 +73,7 @@ public class Department extends Contact {
 
         HashMap map = new HashMap();
         map.put("id", id);
-        return templateFromYaml("/api/delete.yaml", map);
+        return getResponseFromYaml("/api/delete.yaml", map);
     }
 
     public Response update(String id, String name) {
@@ -96,7 +94,7 @@ public class Department extends Contact {
         map.put("_file","/data/update.json");
         map.put("id", id);
         map.put("name", name);
-        return templateFromYaml("/api/update.yaml",map);
+        return getResponseFromYaml("/api/update.yaml",map);
 
     }
 

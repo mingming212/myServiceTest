@@ -15,11 +15,17 @@ import io.restassured.specification.RequestSpecification;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.useRelaxedHTTPSValidation;
 
 public class Api {
     HashMap<String,Object> query =new HashMap<String, Object>();
+
+    public Api(){
+        useRelaxedHTTPSValidation();//信任https的任何证书
+    }
 
     public RequestSpecification getDefaultRequestSpecification(){
         return given();
@@ -157,21 +163,36 @@ public class Api {
             requestSpecification.body(restful.body);
         }
 
-        //todo: 多环境支持，替换url，更新host的header
 
+
+        String[] url=updateUrl(restful.url);
 
         return requestSpecification
                     .log().all()
-                .request(restful.method,restful.url)
+                .header("Host",url[0])
+                .request(restful.method,url[1])
                 .then()
                     .log().all()
                 .extract().response();
     }
 
+    private String[] updateUrl(String url) {
+        //todo: 多环境支持，替换url，更新host的header
+        HashMap<String,String> hosts=WeworkConfig.getInstance().env.get(WeworkConfig.getInstance().current);
+        String host="";
+        String urlNew="";
+        for(Map.Entry<String,String> entry : hosts.entrySet()){
+            if(url.contains(entry.getKey())){
+                host=entry.getKey();
+                urlNew=url.replace(entry.getKey(),entry.getValue());//用正则更严谨
+            }
+        }
+
+        return new String[]{host,urlNew};
+    }
 
 
-
-    public Response templateFromYaml(String path, HashMap<String,Object> map){
+    public Response getResponseFromYaml(String path, HashMap<String,Object> map){
         //fixed：根据yaml生成接口定义并发送
 
         Restful restful=getApiFromYaml(path);
