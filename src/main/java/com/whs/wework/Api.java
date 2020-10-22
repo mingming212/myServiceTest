@@ -39,6 +39,7 @@ public class Api {
         return documentContext.jsonString();
     }
 
+//此为半成品，可作废，下面是成品：getResponseFromHar
     public Response templateFromHar(String path,String pattern,HashMap<String,Object> map){
         //todo：支持从har文件读取接口定义并发送
         //从har中读取请求，进行更新
@@ -58,6 +59,7 @@ public class Api {
         System.out.println("~~~  "+cookie);
         return getDefaultRequestSpecification().given().cookie("cookie", cookie).when().request(method,url);
     }
+
 
     public Response getResponseFromHar(String path,String pattern,HashMap<String,Object> map){
         Restful restful=getApiFromHar(path, pattern);//从har文件中读取接口信息，存在restful中
@@ -177,7 +179,8 @@ public class Api {
     }
 
     private String[] updateUrl(String url) {
-        //todo: 多环境支持，替换url，更新host的header
+        //fixed: 多环境支持，替换url，更新host的header
+        //最好的是用nginx，这里示范的是如果没有Nginx，怎么从接口层面支持
         HashMap<String,String> hosts=WeworkConfig.getInstance().env.get(WeworkConfig.getInstance().current);
         String host="";
         String urlNew="";

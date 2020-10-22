@@ -1,5 +1,8 @@
 package com.whs.wework;
 
+import com.github.mustachejava.DefaultMustacheFactory;
+import com.github.mustachejava.Mustache;
+import com.github.mustachejava.MustacheFactory;
 import de.sstoehr.harreader.HarReader;
 import de.sstoehr.harreader.HarReaderException;
 import de.sstoehr.harreader.model.Har;
@@ -7,7 +10,8 @@ import de.sstoehr.harreader.model.HarEntry;
 import de.sstoehr.harreader.model.HarRequest;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
+import java.io.*;
+import java.util.HashMap;
 
 class ApiTest {
 
@@ -63,5 +67,22 @@ class ApiTest {
     void getResponseFromHar() {
         Api api=new Api();
         api.getResponseFromHar("/api/app.har.json",".*tid=67.*",null);
+    }
+
+    /**
+     * 与其他case独立，仅演示mustache的使用
+     */
+    @Test
+    void mustacheTest() throws IOException {
+        HashMap<String, Object> scope=new HashMap<String, Object>();
+        scope.put("name","11发觉sfe");
+
+        Writer writer=new OutputStreamWriter(System.out);
+        MustacheFactory mf = new DefaultMustacheFactory();
+//        Mustache mustache = mf.compile(new StringReader("这个参数：{{name}} 会被替换成map里的值"),"example");//这种用法，会打印"这个参数：1111 会被替换成map里的值"，后一个参数example不知道啥作用
+//        Mustache mustache = mf.compile(new StringReader("{{name}}, {{feature.description}}!"), "example");//这种用法，会打印"1111, !"
+        Mustache mustache = mf.compile("data/create.mustache");//会打印文档中的内容，且替换掉文档中的{{name}}
+        mustache.execute(writer,scope);
+        writer.flush();
     }
 }
